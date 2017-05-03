@@ -5,5 +5,5 @@ fOne = 1 - fZero;
 
 ind0 = find(data);
 
-loglikelihoodData = log(fZero)*length(ind0) + log(fOne)*(length(data) - length(ind0));
+loglikelihoodData = (log(fZero)*length(ind0) + log(fOne)*(length(data) - length(ind0)))/length(data);
 % loglikelihoodData = log(likelihood);
