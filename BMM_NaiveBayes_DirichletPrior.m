@@ -41,4 +41,7 @@ end
 
 plot(1:length(data), loglikelihoodMartingale, '--r');
 hold on; plot(1:length(data), loglikelihoodSufficient, 'b')
-hold on; plot(1:length(data), repmat(loglikelihoodData,length(data), 1), '-k')
+hold on; plot(1:length(data), repmat(loglikelihoodData,length(data), 1), '-k', 'LineWidth',2)
+xlabel('Number of Observations')
+ylabel('log-likelihood')
+legend('martingale log-likelihood','normal log-likelihood','data log-likelihood')
