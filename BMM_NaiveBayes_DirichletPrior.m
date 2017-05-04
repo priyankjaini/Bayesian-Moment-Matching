@@ -1,5 +1,5 @@
 clear all
-numData = 10000;
+numData = 200000;
 %%% DEFINE NAIVE BAYES MODEL WITH EXACT PARAMETERS %%%
 theta_0 = 0.35;     % P(C=0)
 phi_0 = 0.21;       % P(F=0 | C = 0)
@@ -22,6 +22,11 @@ end
 
 loglikelihoodData = calculateloglik(theta_0, phi_0, lambda_0, data);
 
+
+alpha = randi(5,1,2);
+beta = randi(7,1,2);
+gamma = randi(9,1,2);
+
 alphaM = randi(5,1,2);
 betaM = randi(7,1,2);
 gammaM = randi(9,1,2);
@@ -32,15 +37,23 @@ gammaS = gammaM;
 
 loglikelihoodMartingale(1:length(data)) = 0;
 loglikelihoodSufficient(1:length(data)) = 0;
+loglikelihoodHybrid(1:length(data)) = 0;
 for j = 1 : length(data)
-    [alphaM, betaM, gammaM] = momentMatchingMartingale(alphaM, betaM, gammaM, data(j));
+    if (j<100)
+        [alpha, beta, gamma] = momentMatchingSufficient(alpha, beta, gamma, data(j));
+    else
+        [alpha, beta, gamma] = momentMatchingMartingale(alpha, beta, gamma, data(j));
+    end
+%     [alphaM, betaM, gammaM] = momentMatchingMartingale(alphaM, betaM, gammaM, data(j));
     [alphaS, betaS, gammaS] = momentMatchingSufficient(alphaS, betaS, gammaS, data(j));
-    loglikelihoodMartingale(j) = calculateloglik(alphaM(1)/sum(alphaM), betaM(1)/sum(betaM), gammaM(1)/sum(gammaM), data);
+%     loglikelihoodMartingale(j) = calculateloglik(alphaM(1)/sum(alphaM), betaM(1)/sum(betaM), gammaM(1)/sum(gammaM), data);
     loglikelihoodSufficient(j) = calculateloglik(alphaS(1)/sum(alphaS), betaS(1)/sum(betaS), gammaS(1)/sum(gammaS), data);
+    loglikelihoodHybrid(j) = calculateloglik(alpha(1)/sum(alpha), beta(1)/sum(beta), gamma(1)/sum(gamma), data);
 end
 
-plot(1:length(data), loglikelihoodMartingale, '--r');
-hold on; plot(1:length(data), loglikelihoodSufficient, 'b')
+% plot(1:length(data), loglikelihoodMartingale, '--r','Linewidth', 2);
+plot(1:length(data), loglikelihoodHybrid, '-r','Linewidth', 2);
+hold on; plot(1:length(data), loglikelihoodSufficient, 'b','Linewidth', 2)
 hold on; plot(1:length(data), repmat(loglikelihoodData,length(data), 1), '-k', 'LineWidth',2)
 xlabel('Number of Observations')
 ylabel('log-likelihood')
